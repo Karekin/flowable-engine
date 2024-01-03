@@ -29,41 +29,73 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
- * @author Tom Baeyens
- * @author Agim Emruli
- * @author Joram Barrez
- * 用于在命令执行的生命周期内维护上下文信息。它位于 interceptor 包中，这与它在命令执行拦截器链中的角色有关。
+ * CommandContext 是 Flowable 引擎用于命令执行的上下文。在命令的执行周期内，它提供了执行所需的所有信息。
+ * 它存储了与命令相关的资源、会话以及其他执行期间需要的信息。
+ * 它通常由拦截器创建，用于在拦截器链中传递状态。
  */
 public class CommandContext {
+
+    // 日志记录器，用于记录 CommandContext 相关的信息和异常。
     private static final Logger LOGGER = LoggerFactory.getLogger(CommandContext.class);
-    // 用于存储与当前命令相关的引擎配置的映射
+
+    // 存储不同引擎配置的映射，以便在命令上下文中访问。
     protected Map<String, AbstractEngineConfiguration> engineConfigurations;
-    // 用于存储引擎配置键的堆栈，这有助于管理嵌套命令的执行
+
+    // 用于存储嵌套命令执行时的引擎配置键的堆栈。
     protected LinkedList<String> engineCfgStack = new LinkedList<>();
-    // 当前正在执行的命令
+
+    // 当前正在执行的命令对象。
     protected Command<?> command;
-    // 会话工厂的映射，用于创建和管理不同类型的会话
+
+    // 会话工厂的映射，它负责根据会话类型创建会话实例。
     protected Map<Class<?>, SessionFactory> sessionFactories;
-    // 当前活跃的会话的映射
+
+    // 当前活跃的会话映射，用于存储和检索当前命令关联的会话。
     protected Map<Class<?>, Session> sessions = new HashMap<>();
-    // 在命令执行过程中捕获的异常
+
+    // 在命令执行过程中捕获的异常对象。
     protected Throwable exception;
-    // 在命令上下文关闭时调用的监听器列表
+
+    // 当命令上下文关闭时，将调用的监听器列表。
     protected List<CommandContextCloseListener> closeListeners;
-    // 在命令上下文生命周期内用于存储任何对象的通用属性映射
-    protected Map<String, Object> attributes; // General-purpose storing of anything during the lifetime of a command context
+
+    // 用于在命令上下文的生命周期内存储任何对象的通用属性映射。
+    protected Map<String, Object> attributes;
+
+    // 标志，表示此命令上下文是否被重用。
     protected boolean reused;
-    protected LinkedList<Object> resultStack = new LinkedList<>(); // needs to be a stack, as JavaDelegates can do api calls again
+
+    // 结果堆栈，用于存储命令执行的结果。
+    protected LinkedList<Object> resultStack = new LinkedList<>();
+
+    // 命令执行器，用于执行命令。
     protected CommandExecutor commandExecutor;
+
+    // 类加载器，用于加载类和资源。
     protected ClassLoader classLoader;
+
+    // 表示是否使用 Class.forName 来加载类的标志。
     protected boolean useClassForNameClassLoading;
+
+    // 时钟实例，用于获取当前时间，可能在命令执行中使用。
     protected Clock clock;
+
+    // 对象映射器，用于 JSON 序列化和反序列化。
     protected ObjectMapper objectMapper;
-    
+
+    /**
+     * 构造函数，初始化命令上下文，需要传入要执行的命令。
+     *
+     * @param command 要执行的命令对象。
+     */
     public CommandContext(Command<?> command) {
         this.command = command;
     }
 
+    /**
+     * 关闭命令上下文，确保所有资源被正确关闭。如果在关闭会话或执行监听器时发生异常，
+     * 它们将被捕获并在方法结束时重新抛出。
+     */
     public void close() {
 
         // The intention of this method is that all resources are closed properly, even if exceptions occur
