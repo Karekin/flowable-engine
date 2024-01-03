@@ -32,18 +32,25 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * @author Tom Baeyens
  * @author Agim Emruli
  * @author Joram Barrez
+ * 用于在命令执行的生命周期内维护上下文信息。它位于 interceptor 包中，这与它在命令执行拦截器链中的角色有关。
  */
 public class CommandContext {
-    
     private static final Logger LOGGER = LoggerFactory.getLogger(CommandContext.class);
-
+    // 用于存储与当前命令相关的引擎配置的映射
     protected Map<String, AbstractEngineConfiguration> engineConfigurations;
+    // 用于存储引擎配置键的堆栈，这有助于管理嵌套命令的执行
     protected LinkedList<String> engineCfgStack = new LinkedList<>();
+    // 当前正在执行的命令
     protected Command<?> command;
+    // 会话工厂的映射，用于创建和管理不同类型的会话
     protected Map<Class<?>, SessionFactory> sessionFactories;
+    // 当前活跃的会话的映射
     protected Map<Class<?>, Session> sessions = new HashMap<>();
+    // 在命令执行过程中捕获的异常
     protected Throwable exception;
+    // 在命令上下文关闭时调用的监听器列表
     protected List<CommandContextCloseListener> closeListeners;
+    // 在命令上下文生命周期内用于存储任何对象的通用属性映射
     protected Map<String, Object> attributes; // General-purpose storing of anything during the lifetime of a command context
     protected boolean reused;
     protected LinkedList<Object> resultStack = new LinkedList<>(); // needs to be a stack, as JavaDelegates can do api calls again
