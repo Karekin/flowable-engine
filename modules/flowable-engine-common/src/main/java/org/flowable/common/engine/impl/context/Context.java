@@ -23,11 +23,15 @@ import org.flowable.common.engine.impl.transaction.TransactionContextHolder;
  * @author Tom Baeyens
  * @author Daniel Meyer
  * @author Joram Barrez
+ *
+ * Context 类用于管理 CommandContext 的线程本地存储。
+ * 它使用 ThreadLocal 对象和 Stack 数据结构来确保每个线程可以有自己独立的命令上下文堆栈，
+ * 这使得 Flowable 能够在同一线程中执行嵌套命令而不会发生冲突。
  */
 public class Context {
-
+    // 线程本地变量，用于存储 CommandContext 对象的堆栈。
     protected static ThreadLocal<Stack<CommandContext>> commandContextThreadLocal = new ThreadLocal<>();
-
+    // 返回当前线程堆栈顶部的 CommandContext，如果堆栈为空，则返回 null。
     public static CommandContext getCommandContext() {
         Stack<CommandContext> stack = getStack(commandContextThreadLocal);
         if (stack.isEmpty()) {
@@ -35,11 +39,11 @@ public class Context {
         }
         return stack.peek();
     }
-
+    // 将新的 CommandContext 压入当前线程的堆栈中。
     public static void setCommandContext(CommandContext commandContext) {
         getStack(commandContextThreadLocal).push(commandContext);
     }
-
+    // 从当前线程的堆栈中移除顶部的 CommandContext。
     public static void removeCommandContext() {
         getStack(commandContextThreadLocal).pop();
     }

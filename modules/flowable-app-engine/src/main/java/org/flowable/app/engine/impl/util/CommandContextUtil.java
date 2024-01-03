@@ -35,6 +35,27 @@ import org.flowable.variable.service.VariableServiceConfiguration;
 /**
  * @author Joram Barrez
  * @author Tijs Rademakers
+
+ * CommandContextUtil 是 Flowable 工作流引擎中的一个实用工具类，它提供了一系列的静态方法，用来从当前的 CommandContext 中检索服务和管理类。
+ * CommandContext 通常是与当前执行的命令（即事务）相关联的上下文对象。
+ * 这个工具类的设计目的是为了方便开发者在不同层次的代码中访问这些服务和管理类，而不需要手动传递整个配置对象或者上下文对象。
+
+ * CommandContextUtil 的设计
+ * CommandContextUtil 的设计反映了几个软件设计原则和模式：
+ * 1. **Facade 模式**：这个工具类作为 Flowable 服务和配置访问的 facade（门面），为外部代码提供了一个简单的接口，隐藏了访问复杂服务的内部逻辑。
+ * 2. **Singleton 模式**：所有方法都是静态的，这意味着不需要创建实例就能使用这个工具类，它在内部管理对单一 `CommandContext` 的引用。
+ * 3. **Dependency Injection (DI) 的替代**：虽然 Flowable 支持依赖注入，但在某些情况下，使用静态工具方法访问服务更方便。这种设计选择避免了在方法或类之间传递大量参数。
+ * 4. **Information Expert 原则**：`CommandContextUtil` 将获取 Flowable 服务和配置的职责集中在一个地方，遵循了信息专家原则，即将信息和行为放在拥有完整信息的对象中。
+
+ * 如何设计出 CommandContextUtil 这样的结构
+ * 要设计出像 `CommandContextUtil` 这样的工具类，需要：
+ * 1. **识别重复的代码和模式**：在你的应用程序中，找出那些经常重复的获取服务和管理类的代码。
+ * 2. **抽象和封装**：将这些重复代码抽象成公共的方法，并封装在一个单独的工具类中。
+ * 3. **提供全局访问点**：通过静态方法提供这些服务的访问，确保它们可以在应用程序的任何地方轻松访问。
+ * 4. **确保线程安全和事务性**：如果你的工具类需要在多线程环境中使用，确保它的设计是线程安全的，并且在事务性上下文中正确工作。
+ * 5. **优化性能**：如果需要，为了提高性能，可以缓存一些服务实例，但要确保缓存不会破坏事务的完整性和数据的一致性。
+ * 在设计 `CommandContextUtil` 类型的工具时，要特别注意不要滥用全局静态方法，因为这可能会导致代码难以测试和维护。
+ * 在现代应用程序设计中，通常推荐使用依赖注入框架来管理这些服务的依赖关系，但在特定的上下文和约束条件下，这样的工具类仍然非常有用。
  */
 public class CommandContextUtil {
 

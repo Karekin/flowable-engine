@@ -16,6 +16,8 @@ package org.flowable.common.engine.impl.persistence.entity;
  * @author Tom Baeyens
  * @author Joram Barrez
  * @author Tijs Rademakers
+ *
+ * 这是一个基础接口，定义了实体的基本行为，如获取和设置ID、检查实体状态（插入、更新、删除）以及获取持久状态
  */
 public interface Entity {
 
