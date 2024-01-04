@@ -81,52 +81,53 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
- * Implementation of the multi-instance functionality as described in the BPMN 2.0 spec.
- * 
- * Multi instance functionality is implemented as an {@link ActivityBehavior} that wraps the original {@link ActivityBehavior} of the activity.
- * 
- * Only subclasses of {@link AbstractBpmnActivityBehavior} can have multi-instance behavior. As such, special logic is contained in the {@link AbstractBpmnActivityBehavior} to delegate to the
- * {@link MultiInstanceActivityBehavior} if needed.
- * 
- * @author Joram Barrez
- * @author Tijs Rademakers
- * @author Filip Hrisafov
+ * Flowable 流程引擎中多实例行为的实现，遵循 BPMN 2.0 规范。
+ * 用于处理多实例任务（如用户任务、服务任务等）。
+ * 它封装了创建多个实例、管理它们的执行、处理循环条件和聚合变量等逻辑。
  */
-public abstract class MultiInstanceActivityBehavior extends FlowNodeActivityBehavior implements SubProcessActivityBehavior, InterruptibleActivityBehaviour {
+public abstract class MultiInstanceActivityBehavior extends FlowNodeActivityBehavior
+        implements SubProcessActivityBehavior, InterruptibleActivityBehaviour {
 
     private static final long serialVersionUID = 1L;
 
+    // 日志记录器
     protected static final Logger LOGGER = LoggerFactory.getLogger(MultiInstanceActivityBehavior.class);
+
+    // 用于多实例结束的原因描述
     protected static final String DELETE_REASON_END = "MI_END";
 
-    // Variable names for outer instance(as described in spec)
+    // 多实例循环的变量名，这些是根据 BPMN 规范定义的
     protected static final String NUMBER_OF_INSTANCES = "nrOfInstances";
     protected static final String NUMBER_OF_ACTIVE_INSTANCES = "nrOfActiveInstances";
     protected static final String NUMBER_OF_COMPLETED_INSTANCES = "nrOfCompletedInstances";
 
-    // Instance members
-    protected Activity activity;
-    protected AbstractBpmnActivityBehavior innerActivityBehavior;
-    protected Expression loopCardinalityExpression;
-    protected String completionCondition;
-    protected Expression collectionExpression;
-    protected String collectionVariable; // Not used anymore. Left here for backwards compatibility.
-    protected String collectionElementVariable;
-    protected String collectionString;
-    protected CollectionHandler collectionHandler;
-    protected VariableAggregationDefinitions aggregations;
-    // default variable name for loop counter for inner instances (as described in the spec)
-    protected String collectionElementIndexVariable = "loopCounter";
+    // 实例成员变量
+    protected Activity activity;  // 包含多实例特性的活动
+    protected AbstractBpmnActivityBehavior innerActivityBehavior;  // 被多实例行为包装的原始活动行为
+    protected Expression loopCardinalityExpression;  // 循环次数的表达式
+    protected String completionCondition;  // 完成条件
+    protected Expression collectionExpression;  // 集合表达式
+    protected String collectionVariable;  // 集合变量（现已不再使用，仅为向后兼容保留）
+    protected String collectionElementVariable;  // 集合元素变量
+    protected String collectionString;  // 集合字符串
+    protected CollectionHandler collectionHandler;  // 集合处理器
+    protected VariableAggregationDefinitions aggregations;  // 变量聚合定义
+    protected String collectionElementIndexVariable = "loopCounter";  // 循环计数器的变量名，默认为 "loopCounter"
 
     /**
-     * @param innerActivityBehavior
-     *            The original {@link ActivityBehavior} of the activity that will be wrapped inside this behavior.
+     * 构造函数，接收活动定义和内部活动行为。
+     * @param activity 包含多实例特性的活动。
+     * @param innerActivityBehavior 被多实例行为包装的原始活动行为。
      */
     public MultiInstanceActivityBehavior(Activity activity, AbstractBpmnActivityBehavior innerActivityBehavior) {
         this.activity = activity;
         setInnerActivityBehavior(innerActivityBehavior);
     }
 
+    /**
+     * 执行方法，负责多实例活动的执行逻辑。
+     * @param delegateExecution 执行对象，提供了执行流程中的上下文。
+     */
     @Override
     public void execute(DelegateExecution delegateExecution) {
         ExecutionEntity execution = (ExecutionEntity) delegateExecution;
@@ -205,9 +206,6 @@ public abstract class MultiInstanceActivityBehavior extends FlowNodeActivityBeha
         }
     }
 
-    /**
-     * Aggregates all variables that were stored before for each child instance
-     */
     protected void aggregateVariablesOfAllInstances(DelegateExecution multiInstanceRootExecution) {
         ProcessEngineConfigurationImpl processEngineConfiguration = CommandContextUtil.getProcessEngineConfiguration();
         VariableService variableService = processEngineConfiguration.getVariableServiceConfiguration().getVariableService();
@@ -239,6 +237,10 @@ public abstract class MultiInstanceActivityBehavior extends FlowNodeActivityBeha
         }
     }
 
+    /**
+     * 在多实例执行结束后的清理逻辑。
+     * @param execution 当前执行上下文。
+     */
     protected void cleanupMiRoot(DelegateExecution execution) {
         // Delete multi instance root and all child executions.
         // Create a fresh execution to continue

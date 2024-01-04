@@ -16,25 +16,30 @@ import org.flowable.engine.delegate.DelegateExecution;
 import org.flowable.engine.impl.delegate.invocation.DelegateInvocation;
 
 /**
- * 
- * @author Daniel Meyer
+ * ActivityBehaviorInvocation 类用于封装对 ActivityBehavior 实例的调用。
+ * 这个类实现了具体的行为调用逻辑，用于执行与BPMN活动相关联的行为。
  */
 public class ActivityBehaviorInvocation extends DelegateInvocation {
 
+    // 封装的 ActivityBehavior 实例，定义了BPMN活动的具体行为
     protected final ActivityBehavior behaviorInstance;
 
+    // 流程执行对象，提供了当前流程执行的上下文
     protected final DelegateExecution execution;
 
+    // 构造函数，初始化 ActivityBehavior 实例和流程执行对象
     public ActivityBehaviorInvocation(ActivityBehavior behaviorInstance, DelegateExecution execution) {
         this.behaviorInstance = behaviorInstance;
         this.execution = execution;
     }
 
+    // 调用封装的 ActivityBehavior 实例的 execute 方法
     @Override
     protected void invoke() {
         behaviorInstance.execute(execution);
     }
 
+    // 获取调用目标，即 ActivityBehavior 实例
     @Override
     public Object getTarget() {
         return behaviorInstance;

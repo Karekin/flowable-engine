@@ -29,19 +29,19 @@ import org.flowable.engine.impl.util.CommandContextUtil;
 import org.flowable.engine.impl.util.ProcessDefinitionUtil;
 
 /**
- * Denotes an 'activity' in the sense of BPMN 2.0: a parent class for all tasks, subprocess and callActivity.
- * 
- * @author Joram Barrez
+ * AbstractBpmnActivityBehavior 是所有BPMN活动行为的基类，如任务、子流程和调用活动。
+ * 它提供了处理多实例特性和执行边界事件的基本行为。
  */
 public class AbstractBpmnActivityBehavior extends FlowNodeActivityBehavior {
 
     private static final long serialVersionUID = 1L;
 
+    // 处理多实例活动的行为
     protected MultiInstanceActivityBehavior multiInstanceActivityBehavior;
 
     /**
-     * Subclasses that call leave() will first pass through this method, before the regular {@link FlowNodeActivityBehavior#leave(DelegateExecution)} is called. This way, we can check if the activity
-     * has loop characteristics, and delegate to the behavior if this is the case.
+     * 在正常的 {@link FlowNodeActivityBehavior#leave(DelegateExecution)} 被调用之前，子类调用 leave() 会先通过此方法。
+     * 这样，我们可以检查活动是否有循环特性，并在这种情况下委托给相应的行为。
      */
     @Override
     public void leave(DelegateExecution execution) {
@@ -57,6 +57,7 @@ public class AbstractBpmnActivityBehavior extends FlowNodeActivityBehavior {
         }
     }
 
+    // 执行与流程节点关联的补偿边界事件
     protected void executeCompensateBoundaryEvents(Collection<BoundaryEvent> boundaryEvents, DelegateExecution execution) {
 
         // The parent execution becomes a scope, and a child execution is created for each of the boundary events
@@ -95,23 +96,28 @@ public class AbstractBpmnActivityBehavior extends FlowNodeActivityBehavior {
         return results;
     }
 
+    // 获取流程定义
     protected Process getProcessDefinition(String processDefinitionId) {
         // TODO: must be extracted / cache should be accessed in another way
         return ProcessDefinitionUtil.getProcess(processDefinitionId);
     }
 
+    // 判断活动是否具有循环特性
     protected boolean hasLoopCharacteristics() {
         return hasMultiInstanceCharacteristics();
     }
 
+    // 判断活动是否具有多实例特性
     protected boolean hasMultiInstanceCharacteristics() {
         return multiInstanceActivityBehavior != null;
     }
 
+    // 获取多实例活动的行为
     public MultiInstanceActivityBehavior getMultiInstanceActivityBehavior() {
         return multiInstanceActivityBehavior;
     }
 
+    // 设置多实例活动的行为
     public void setMultiInstanceActivityBehavior(MultiInstanceActivityBehavior multiInstanceActivityBehavior) {
         this.multiInstanceActivityBehavior = multiInstanceActivityBehavior;
     }
