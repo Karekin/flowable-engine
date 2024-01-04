@@ -13,88 +13,85 @@
 package org.flowable.engine.runtime;
 
 /**
- * Represent a 'path of execution' in a process instance.
- * 
- * Note that a {@link ProcessInstance} also is an execution.
- * 
- * @author Joram Barrez
+ * Execution 接口代表了流程实例中的一个执行路径。
+ * 这个路径可以是整个流程实例，也可以是流程中的一个分支或阶段。
+ * 注意，一个 {@link ProcessInstance}（流程实例）也是一种 Execution。
  */
 public interface Execution {
 
     /**
-     * The unique identifier of the execution.
+     * 获取执行路径的唯一标识符。
      */
     String getId();
 
     /**
-     * Indicates if the execution is suspended.
+     * 指示执行路径是否被挂起。
      */
     boolean isSuspended();
 
     /**
-     * Indicates if the execution is ended.
+     * 指示执行路径是否已结束。
      */
     boolean isEnded();
 
     /**
-     * Returns the id of the activity where the execution currently is at. Returns null if the execution is not a 'leaf' execution (eg concurrent parent).
+     * 返回执行路径当前所在的活动ID。如果执行不是叶子执行（例如并发的父执行），则返回null。
      */
     String getActivityId();
 
     /**
-     * Id of the root of the execution tree representing the process instance. It is the same as {@link #getId()} if this execution is the process instance.
+     * 获取表示流程实例的执行树的根的ID。如果这个执行就是流程实例，它与 getId() 相同。
      */
     String getProcessInstanceId();
 
     /**
-     * Gets the id of the parent of this execution. If null, the execution represents a process-instance.
+     * 获取这个执行的父执行的ID。如果为null，则表示这个执行代表一个流程实例。
      */
     String getParentId();
 
     /**
-     * Gets the id of the super execution of this execution.
+     * 获取这个执行的超级执行的ID。
      */
     String getSuperExecutionId();
 
     /**
-     * Id of the root of the execution tree representing the process instance that has no super execution.
+     * 获取没有超级执行的表示流程实例的执行树的根的ID。
      */
     String getRootProcessInstanceId();
 
     /**
-     * The tenant identifier of this process instance
+     * 获取这个流程实例的租户标识符。
      */
     String getTenantId();
 
     /**
-     * Returns the name of this execution.
+     * 返回这个执行的名称。
      */
     String getName();
 
     /**
-     * Returns the description of this execution.
+     * 返回这个执行的描述。
      */
     String getDescription();
 
     /**
-     * If this execution has created a case (through a case task), this will return the referenced case instance id.
+     * 如果这个执行通过案例任务创建了一个案例，这将返回引用的案例实例ID。
      *
-     * @return the id of the optionally referenced case instance, if this execution created a case
+     * @return 如果这个执行创建了一个案例，返回引用的案例实例的ID。
      */
     String getReferenceId();
 
     /**
-     * If this execution has created a case (through a case task), this will return the referenced case type (e.g. bpmn-x-to-cmmn-y type).
+     * 如果这个执行通过案例任务创建了一个案例，这将返回引用的案例类型（例如 bpmn-x-to-cmmn-y 类型）。
      *
-     * @return the type of the optionally referenced case instance, if this execution created a case
+     * @return 如果这个执行创建了一个案例，返回引用的案例实例的类型。
      */
     String getReferenceType();
 
     /**
-     * If this execution runs in the context of a case and stage, this method returns it's closest parent stage instance id (the stage plan item instance id to be
-     * precise).
+     * 如果这个执行在案例和阶段的上下文中运行，这个方法返回它最近的父阶段实例ID（准确地说是阶段计划项实例ID）。
      *
-     * @return the stage instance id this execution belongs to or null, if this execution is not part of a case at all or is not a child element of a stage
+     * @return 这个执行所属的阶段实例ID，如果这个执行不是案例的一部分或不是阶段的子元素，则返回null。
      */
     String getPropagatedStageInstanceId();
 }

@@ -1,103 +1,90 @@
-/* Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package org.flowable.eventsubscription.api;
 
 import java.util.Date;
 
 /**
- * Represent an event subscription for a process definition or a process instance.
- * 
- * @author Tijs Rademakers
+ * EventSubscription 接口代表了流程定义或流程实例中的一个事件订阅，用于处理例如信号或消息这样的事件。
+ * 事件订阅是工作流程和业务流程管理中的关键概念，允许流程元素在特定事件（如消息、信号等）发生时进行响应
  */
 public interface EventSubscription {
 
     /**
-     * The unique identifier of the execution.
+     * 获取执行实例的唯一标识符。
      */
     String getId();
 
     /**
-     * Returns the type of subscription, for example signal or message.
+     * 返回订阅的类型，例如信号或消息。
      */
     String getEventType();
 
     /**
-     * The event name for the signal or message event.
+     * 获取信号或消息事件的事件名称。
      */
     String getEventName();
 
     /**
-     * Gets the id of the execution for this event subscription.
+     * 获取此事件订阅的执行实例ID。
      */
     String getExecutionId();
 
     /**
-     * Gets the activity id of the BPMN definition where this event subscription is defined.
+     * 获取在 BPMN 定义中定义此事件订阅的活动ID。
      */
     String getActivityId();
 
     /**
-     * Id of the process instance for this event subscription.
+     * 获取此事件订阅的流程实例ID。
      */
     String getProcessInstanceId();
 
     /**
-     * Id of the process definition for this event subscription.
+     * 获取此事件订阅的流程定义ID。
      */
     String getProcessDefinitionId();
-    
+
     /**
-     * Id of the sub scope for this event subscription.
+     * 获取此事件订阅的子范围ID。
      */
     String getSubScopeId();
-    
+
     /**
-     * Id of the scope for this event subscription.
+     * 获取此事件订阅的范围ID。
      */
     String getScopeId();
-    
+
     /**
-     * Id of the scope definition for this event subscription.
+     * 获取此事件订阅的范围定义ID。
      */
     String getScopeDefinitionId();
-    
+
     /**
-     * Scope type for this event subscription.
+     * 获取此事件订阅的范围类型。
      */
     String getScopeType();
 
     /**
-     * Returns the configuration with additional info about this event subscription.
+     * 返回包含此事件订阅额外信息的配置。
      */
     String getConfiguration();
 
     /**
-     * Gets the date/time when this event subscription was created.
+     * 获取创建此事件订阅的日期/时间。
      */
     Date getCreated();
 
     /**
-     * Gets the owner of this event subscription, if it was locked.
+     * 如果此事件订阅被锁定，获取其所有者。
      */
     String getLockOwner();
 
     /**
-     * Gets the date/time when this event subscription was locked.
+     * 获取锁定此事件订阅的日期/时间。
      */
     Date getLockTime();
 
     /**
-     * The tenant identifier of this process instance
+     * 获取此流程实例的租户标识符。
      */
     String getTenantId();
 }

@@ -13,16 +13,27 @@
 package org.flowable.common.engine.impl.db;
 
 /**
- * Entities that are using revisions for optimistic locking, need to implement this interface.
- * 
- * @author Joram Barrez
+ * HasRevision 接口被用于实现乐观锁机制的实体。
+ * 实现此接口的实体可以通过版本号（revision）来控制并发访问，以确保数据一致性。
  */
 public interface HasRevision {
 
+    /**
+     * 设置实体的当前版本号。
+     * 在更新实体时，此版本号用于确保没有其他并发操作修改了同一实体。
+     */
     void setRevision(int revision);
 
+    /**
+     * 获取实体的当前版本号。
+     * 该版本号反映了实体自上次更新以来的修改次数。
+     */
     int getRevision();
 
+    /**
+     * 获取实体的下一个版本号。
+     * 通常在实体更新时使用，以确保实体的版本号递增，从而有效实现乐观锁机制。
+     */
     int getRevisionNext();
 
 }

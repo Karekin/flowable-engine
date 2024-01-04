@@ -20,175 +20,177 @@ import org.flowable.bpmn.model.FlowableListener;
 import org.flowable.variable.api.delegate.VariableScope;
 
 /**
- * Execution used in {@link JavaDelegate}s and {@link ExecutionListener}s.
- * 
+ * 执行用于 {@link JavaDelegate} 和 {@link ExecutionListener} 的接口。
+ * 它定义了流程执行期间可以访问和管理的执行上下文相关的属性和行为。
+ *
  * @author Tom Baeyens
  * @author Joram Barrez
  */
 public interface DelegateExecution extends VariableScope {
 
     /**
-     * Unique id of this path of execution that can be used as a handle to provide external signals back into the engine after wait states.
+     * 获取这个执行路径的唯一标识符，这可以作为在等待状态后向引擎提供外部信号的句柄。
      */
     String getId();
 
-    /** Reference to the overall process instance */
+    /** 获取关联到这个执行的整个流程实例的引用 */
     String getProcessInstanceId();
 
     /**
-     * The 'root' process instance. When using call activity for example, the processInstance set will not always be the root. This method returns the topmost process instance.
+     * 获取'根'流程实例的标识符。当使用调用活动（Call Activity）时，返回的流程实例可能不总是根实例。
+     * 此方法返回最顶层的流程实例标识符。
      */
     String getRootProcessInstanceId();
 
     /**
-     * Will contain the event name in case this execution is passed in for an {@link ExecutionListener}.
+     * 如果这个执行被传递给 {@link ExecutionListener}，将包含事件名称。
      */
     String getEventName();
 
     /**
-     * Sets the current event (typically when execution an {@link ExecutionListener}).
+     * 设置当前事件名称（通常是在执行 {@link ExecutionListener} 时）。
      */
     void setEventName(String eventName);
 
     /**
-     * The business key for the process instance this execution is associated with.
+     * 获取与此执行关联的流程实例的业务键。
      */
     String getProcessInstanceBusinessKey();
     
     /**
-     * The business status for the process instance this execution is associated with.
+     * 获取与此执行关联的流程实例的业务状态。
      */
     String getProcessInstanceBusinessStatus();
 
     /**
-     * The process definition key for the process instance this execution is associated with.
+     * 获取与此执行关联的流程定义的键。
      */
     String getProcessDefinitionId();
 
     /**
-     * If this execution runs in the context of a case and stage, this method returns it's closest parent stage instance id (the stage plan item instance id to be
-     * precise).
+     * 如果这个执行在一个案例和阶段的上下文中运行，这个方法返回它最近的父阶段实例标识符（确切地说是阶段计划项实例标识符）。
      *
-     * @return the stage instance id this execution belongs to or null, if this execution is not part of a case at all or is not a child element of a stage
+     * @return 执行所属阶段实例的标识符；如果这个执行根本不是案例的一部分，或者不是阶段子元素，则返回null。
      */
     String getPropagatedStageInstanceId();
 
     /**
-     * Gets the id of the parent of this execution. If null, the execution represents a process-instance.
+     * 获取这个执行的父执行的标识符。如果返回null，那么这个执行代表一个流程实例。
      */
     String getParentId();
 
     /**
-     * Gets the id of the calling execution. If not null, the execution is part of a subprocess.
+     * 获取调用执行的标识符。如果不为null，则执行是子流程的一部分。
      */
     String getSuperExecutionId();
 
     /**
-     * Gets the id of the current activity.
+     * 获取当前活动的标识符。
      */
     String getCurrentActivityId();
 
     /**
-     * Returns the tenant id, if any is set before on the process definition or process instance.
+     * 如果在流程定义或流程实例上之前设置了租户标识符，则返回该租户标识符。
      */
     @Override
     String getTenantId();
 
     /**
-     * The BPMN element where the execution currently is at.
+     * 获取执行当前所在的BPMN元素。
      */
     FlowElement getCurrentFlowElement();
 
     /**
-     * Change the current BPMN element the execution is at.
+     * 更改执行当前所在的BPMN元素。
      */
     void setCurrentFlowElement(FlowElement flowElement);
 
     /**
-     * Returns the {@link FlowableListener} instance matching an {@link ExecutionListener} if currently an execution listener is being execution. Returns null otherwise.
+     * 如果当前正在执行一个与 {@link ExecutionListener} 匹配的 {@link FlowableListener}，则返回它。
+     * 否则返回null。
      */
     FlowableListener getCurrentFlowableListener();
 
     /**
-     * Called when an {@link ExecutionListener} is being executed.
+     * 在执行 {@link ExecutionListener} 时被调用。
      */
     void setCurrentFlowableListener(FlowableListener currentListener);
 
     /**
-     * Create a snapshot read only delegate execution of this delegate execution.
+     * 创建这个 delegate execution 的只读快照。
      *
-     * @return a {@link ReadOnlyDelegateExecution}
+     * @return {@link ReadOnlyDelegateExecution} 的实例
      */
     ReadOnlyDelegateExecution snapshotReadOnly();
 
-    /* Execution management */
+    /* 执行管理 */
 
     /**
-     * returns the parent of this execution, or null if there no parent.
+     * 返回这个执行的父执行，如果没有父执行则返回null。
      */
     DelegateExecution getParent();
 
     /**
-     * returns the list of execution of which this execution the parent of.
+     * 返回这个执行作为父执行的执行列表。
      */
     List<? extends DelegateExecution> getExecutions();
 
-    /* State management */
+    /* 状态管理 */
 
     /**
-     * makes this execution active or inactive.
+     * 设置这个执行是否活跃。
      */
     void setActive(boolean isActive);
 
     /**
-     * returns whether this execution is currently active.
+     * 返回这个执行当前是否活跃。
      */
     boolean isActive();
 
     /**
-     * returns whether this execution has ended or not.
+     * 返回这个执行是否已经结束。
      */
     boolean isEnded();
 
     /**
-     * changes the concurrent indicator on this execution.
+     * 更改这个执行上的并发指示器。
      */
     void setConcurrent(boolean isConcurrent);
 
     /**
-     * returns whether this execution is concurrent or not.
+     * 返回这个执行是否并发。
      */
     boolean isConcurrent();
 
     /**
-     * returns whether this execution is a process instance or not.
+     * 返回这个执行是否为流程实例。
      */
     boolean isProcessInstanceType();
 
     /**
-     * Inactivates this execution. This is useful for example in a join: the execution still exists, but it is not longer active.
+     * 使这个执行变为非活跃状态。这在例如联接时很有用：执行仍然存在，但不再活跃。
      */
     void inactivate();
 
     /**
-     * Returns whether this execution is a scope.
+     * 返回这个执行是否是一个作用域。
      */
     boolean isScope();
 
     /**
-     * Changes whether this execution is a scope or not.
+     * 更改这个执行是否为一个作用域。
      */
     void setScope(boolean isScope);
 
     /**
-     * Returns whether this execution is the root of a multi instance execution.
+     * 返回这个执行是否是多实例执行的根。
      */
     boolean isMultiInstanceRoot();
 
     /**
-     * Changes whether this execution is a multi instance root or not.
-     * 
-     * @param isMultiInstanceRoot
+     * 更改这个执行是否是多实例执行的根。
+     *
+     * @param isMultiInstanceRoot 是否为多实例的根
      */
     void setMultiInstanceRoot(boolean isMultiInstanceRoot);
 

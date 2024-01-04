@@ -18,106 +18,102 @@ import java.util.Map;
 import org.flowable.engine.repository.ProcessDefinition;
 
 /**
- * Represents one execution of a {@link ProcessDefinition}.
- * 
- * @author Tom Baeyens
- * @author Joram Barrez
- * @author Daniel Meyer
- * @author Tijs Rademakers
+ * ProcessInstance 接口代表了一个流程定义{@link ProcessDefinition}的执行实例。
+ * 它提供了访问流程实例属性和状态的方法。
  */
 public interface ProcessInstance extends Execution {
 
     /**
-     * The id of the process definition of the process instance.
+     * 获取流程实例对应的流程定义ID。
      */
     String getProcessDefinitionId();
 
     /**
-     * The name of the process definition of the process instance.
+     * 获取流程实例对应的流程定义名称。
      */
     String getProcessDefinitionName();
 
     /**
-     * The key of the process definition of the process instance.
+     * 获取流程实例对应的流程定义关键字。
      */
     String getProcessDefinitionKey();
 
     /**
-     * The version of the process definition of the process instance.
+     * 获取流程实例对应的流程定义版本。
      */
     Integer getProcessDefinitionVersion();
 
     /**
-     * The deployment id of the process definition of the process instance.
+     * 获取流程实例对应的流程定义的部署ID。
      */
     String getDeploymentId();
 
     /**
-     * The business key of this process instance.
+     * 获取流程实例的业务关键字。
      */
     String getBusinessKey();
-    
+
     /**
-     * The business status of this process instance.
+     * 获取流程实例的业务状态。
      */
     String getBusinessStatus();
 
     /**
-     * returns true if the process instance is suspended
+     * 返回流程实例是否被挂起。
      */
     @Override
     boolean isSuspended();
 
     /**
-     * Returns the process variables if requested in the process instance query
+     * 如果在流程实例查询中请求，则返回流程变量。
      */
     Map<String, Object> getProcessVariables();
 
     /**
-     * The tenant identifier of this process instance
+     * 获取流程实例的租户标识符。
      */
     @Override
     String getTenantId();
 
     /**
-     * Returns the name of this process instance.
+     * 返回流程实例的名称。
      */
     @Override
     String getName();
 
     /**
-     * Returns the description of this process instance.
+     * 返回流程实例的描述。
      */
     @Override
     String getDescription();
 
     /**
-     * Returns the localized name of this process instance.
+     * 返回流程实例的本地化名称。
      */
     String getLocalizedName();
 
     /**
-     * Returns the localized description of this process instance.
+     * 返回流程实例的本地化描述。
      */
     String getLocalizedDescription();
 
     /**
-     * Returns the start time of this process instance.
+     * 返回流程实例的开始时间。
      */
     Date getStartTime();
 
     /**
-     * Returns the user id of this process instance.
+     * 返回启动此流程实例的用户ID。
      */
     String getStartUserId();
-    
+
     /**
-     * Returns the callback id of this process instance.
+     * 返回此流程实例的回调ID。
      */
     String getCallbackId();
-    
+
     /**
-     * Returns the callback type of this process instance. 
+     * 返回此流程实例的回调类型。
      */
     String getCallbackType();
 }
