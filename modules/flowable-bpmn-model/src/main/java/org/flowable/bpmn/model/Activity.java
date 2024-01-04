@@ -16,18 +16,36 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author Tijs Rademakers
+ * Activity 抽象类代表了 BPMN 流程图中的一个活动节点。
+ * 它是所有具体活动类型的基类，提供了活动的基本属性和行为。
  */
 public abstract class Activity extends FlowNode {
 
+    // 默认流程的ID，用于在活动中作为默认的流转路径
     protected String defaultFlow;
+
+    // 标识该活动是否是补偿活动
     protected boolean forCompensation;
+
+    // 多实例循环特性，描述活动如何多次执行
     protected MultiInstanceLoopCharacteristics loopCharacteristics;
+
+    // 输入/输出规范，定义了活动的数据输入和输出
     protected IOSpecification ioSpecification;
+
+    // 数据输入关联，定义了与活动的数据输入相关的数据
     protected List<DataAssociation> dataInputAssociations = new ArrayList<>();
+
+    // 数据输出关联，定义了与活动的数据输出相关的数据
     protected List<DataAssociation> dataOutputAssociations = new ArrayList<>();
+
+    // 边界事件，与活动关联的事件，如错误事件或消息事件
     protected List<BoundaryEvent> boundaryEvents = new ArrayList<>();
+
+    // 失败作业重试时间周期值，用于定义作业失败时的重试策略
     protected String failedJobRetryTimeCycleValue;
+
+    // 异常映射条目，定义了活动发生异常时的处理规则
     protected List<MapExceptionEntry> mapExceptions = new ArrayList<>();
 
     public String getFailedJobRetryTimeCycleValue() {
@@ -106,18 +124,28 @@ public abstract class Activity extends FlowNode {
         this.mapExceptions = mapExceptions;
     }
 
+    /**
+     * 设置这个活动节点的属性为另一个 Activity 节点的属性。
+     * 该方法用于复制活动节点或在活动节点之间共享属性。
+     */
     public void setValues(Activity otherActivity) {
         super.setValues(otherActivity);
+        // 复制其他活动的属性
         setFailedJobRetryTimeCycleValue(otherActivity.getFailedJobRetryTimeCycleValue());
         setDefaultFlow(otherActivity.getDefaultFlow());
         setForCompensation(otherActivity.isForCompensation());
+
+        // 复制多实例循环特性
         if (otherActivity.getLoopCharacteristics() != null) {
             setLoopCharacteristics(otherActivity.getLoopCharacteristics().clone());
         }
+
+        // 复制输入/输出规范
         if (otherActivity.getIoSpecification() != null) {
             setIoSpecification(otherActivity.getIoSpecification().clone());
         }
 
+        // 复制数据输入和输出关联
         dataInputAssociations = new ArrayList<>();
         if (otherActivity.getDataInputAssociations() != null && !otherActivity.getDataInputAssociations().isEmpty()) {
             for (DataAssociation association : otherActivity.getDataInputAssociations()) {
@@ -132,6 +160,7 @@ public abstract class Activity extends FlowNode {
             }
         }
 
+        // 复制边界事件
         boundaryEvents.clear();
         boundaryEvents.addAll(otherActivity.getBoundaryEvents());
     }

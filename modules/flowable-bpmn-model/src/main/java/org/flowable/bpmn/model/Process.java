@@ -21,30 +21,68 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * @author Tijs Rademakers
- * @author Joram Barrez
+ * Process 类表示一个完整的BPMN流程定义。
+ * 它包含了流程中的所有元素，包括活动、网关、事件、数据对象以及候选启动者等。
  */
 public class Process extends BaseElement implements FlowElementsContainer, HasExecutionListeners {
 
+    // 流程的名称
     protected String name;
+
+    // 指示流程是否可执行的标志
     protected boolean executable = true;
+
+    // 流程的文档描述
     protected String documentation;
+
+    // 流程的输入输出规范
     protected IOSpecification ioSpecification;
+
+    // 流程的执行监听器列表
     protected List<FlowableListener> executionListeners = new ArrayList<>();
+
+    /**
+     * 流程的泳道列表
+     * 在BPMN（业务流程模型和符号）中，泳道（Lane）是一种用于组织和分类流程中的活动的工具。
+
+     * 你可以把泳道想象成一个游泳池中的分道线，每条泳道可以代表一个特定的部门、角色、系统或参与者，它们负责流程中的不同活动或任务。
+     * 举个例子，想象一个典型的采购流程，这个流程可能包括三个主要参与者：申请人、审批人和采购部门。在流程图中，你可以为每个参与者创建一个泳道：
+         * - **申请人泳道**：包含提交采购请求的活动。
+         * - **审批人泳道**：包含审批或拒绝请求的活动。
+         * - **采购部门泳道**：包含执行采购订单和管理供应商关系的活动。
+     * 使用泳道的好处是，它可以清晰地显示哪些活动是由哪个部门或个人负责，使得流程的职责分工一目了然。
+     * 这有助于简化流程理解和沟通，同时确保每个任务都有明确的责任主体。在流程管理系统中，泳道还可以用来控制权限，确保只有相关责任人才能看到或执行特定的任务。
+     */
     protected List<Lane> lanes = new ArrayList<>();
+
+    // 流程的流程元素列表
     protected List<FlowElement> flowElementList = new ArrayList<>();
+
+    // 流程的数据对象列表
     protected List<ValuedDataObject> dataObjects = new ArrayList<>();
+
+    // 流程的工件列表
     protected List<Artifact> artifactList = new ArrayList<>();
+
+    // 流程的候选启动用户列表
     protected List<String> candidateStarterUsers = new ArrayList<>();
+
+    // 流程的候选启动组列表
     protected List<String> candidateStarterGroups = new ArrayList<>();
+
+    // 流程的事件监听器列表
     protected List<EventListener> eventListeners = new ArrayList<>();
+
+    // 流程元素的映射（id -> 元素）
     protected Map<String, FlowElement> flowElementMap = new LinkedHashMap<>();
+
+    // 工件的映射（id -> 工件）
     protected Map<String, Artifact> artifactMap = new LinkedHashMap<>();
 
-    // Added during process definition parsing
+    // 在流程定义解析期间添加的初始流程元素
     protected FlowElement initialFlowElement;
-    
-    // Performance settings
+
+    // 性能设置：是否启用急切的执行树获取
     protected boolean enableEagerExecutionTreeFetching;
 
     public Process() {
@@ -377,6 +415,7 @@ public class Process extends BaseElement implements FlowElementsContainer, HasEx
         return clone;
     }
 
+    // 从另一个 Process 对象复制属性值的方法
     public void setValues(Process otherElement) {
         super.setValues(otherElement);
 

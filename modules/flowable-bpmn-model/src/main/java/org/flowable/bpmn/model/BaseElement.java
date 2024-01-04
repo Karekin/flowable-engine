@@ -20,15 +20,24 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * @author Tijs Rademakers
+ * BaseElement 类是 BPMN 流程定义中所有元素的基础抽象类。
+ * 它定义了所有元素共有的基本属性，如id、扩展元素和属性。
  */
 public abstract class BaseElement implements HasExtensionAttributes {
 
+    // 元素的唯一标识符
     protected String id;
+
+    // 元素在XML文档中的行号
     protected int xmlRowNumber;
+
+    // 元素在XML文档中的列号
     protected int xmlColumnNumber;
+
+    // 扩展元素的集合，这些是非标准的额外信息，可以附加到任何BPMN元素上
     protected Map<String, List<ExtensionElement>> extensionElements = new LinkedHashMap<>();
-    /** extension attributes could be part of each element */
+
+    // 扩展属性的集合，这些可以是任何BPMN元素的额外属性
     protected Map<String, List<ExtensionAttribute>> attributes = new LinkedHashMap<>();
 
     public String getId() {
@@ -104,11 +113,17 @@ public abstract class BaseElement implements HasExtensionAttributes {
         }
     }
 
+    /**
+     * 设置当前元素的所有扩展属性。
+     */
     @Override
     public void setAttributes(Map<String, List<ExtensionAttribute>> attributes) {
         this.attributes = attributes;
     }
 
+    /**
+     * 复制另一个 BaseElement 的属性到当前元素。
+     */
     public void setValues(BaseElement otherElement) {
         setId(otherElement.getId());
 
@@ -141,6 +156,9 @@ public abstract class BaseElement implements HasExtensionAttributes {
         }
     }
 
+    /**
+     * 克隆当前元素的方法，每个具体的子类都需要实现这个方法。
+     */
     @Override
     public abstract BaseElement clone();
 }
